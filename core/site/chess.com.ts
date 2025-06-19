@@ -88,9 +88,9 @@ export class Chess {
 			const chess_com = await Chess.com.stats(user);
 			if (chess_com === null) return null;
 			return {
-				rapid: { rating: chess_com?.chess_rapid?.last?.rating || 0 },
+				bullet: { rating: chess_com?.chess_bullet?.last?.rating || 0 },
 				blitz: { rating: chess_com?.chess_blitz?.last?.rating || 0 },
-				bullet: { rating: chess_com?.chess_bullet?.last?.rating || 0 }
+				rapid: { rating: chess_com?.chess_rapid?.last?.rating || 0 },
 			};
 		},
 

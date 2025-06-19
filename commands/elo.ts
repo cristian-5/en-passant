@@ -6,7 +6,7 @@ import { lichess } from "../core/site/lichess.org.ts";
 import { Chess }   from "../core/site/chess.com.ts";
 
 const colors: { [platform: string]: number } = {
-	"FIDE": 0xF1C40F, "lichess.org": 0xFFFFFF, "Chess.com": 0x7FA650
+	"fide": 0xF1C40F, "lichess.org": 0xFFFFFF, "chess.com": 0x7FA650
 };
 const platforms: { [platform: string]: string } = {
 	"fide": "FIDE", "lichess.org": "lichess.org", "chess.com": "Chess.com"
