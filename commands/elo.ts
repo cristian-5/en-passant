@@ -59,7 +59,7 @@ function ratingCard(author: string, id: string, platform: string, ratings: Ratin
 	return Discord.card(
 		`Elo di ${platforms[platform]}`,
 		`:star: <@${author}> (\`${id}\`) ${highlight(platform)} ratings:\n` +
-		Object.entries(ratings).map(
+		Object.entries(ratings).filter(([category, _]) => category in emojis).map(
 			([category, { rating }]) => `${emojis[category]} **${category}** \`${rating}\``
 		).join('** ｜ **'),
 		colors[platform]
