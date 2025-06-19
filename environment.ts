@@ -24,9 +24,16 @@ export const Discord = {
 			title: title || Bot.NAME,
 			color: color || ColorCodes.normal,
 			description: message || ""
-		}],
-		flags: silent ? MessageFlags.EPHEMERAL : 0 // ephemeral message (only visible to the user)
+		}], flags: silent ? MessageFlags.EPHEMERAL : 0 // ephemeral message (only visible to the user)
+	}),
+	error: (title: string, message: string): InteractionResponse => ({
+		embeds: [{
+			title: title || Bot.NAME,
+			color: ColorCodes.error,
+			description: ":no_entry_sign: " + (message || "Error!")
+		}], flags: MessageFlags.EPHEMERAL
 	})
+
 };
 
 export const ColorCodes = {
