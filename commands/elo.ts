@@ -2,9 +2,9 @@
 import { Command, CommandType, CommandOptionType } from "../types/command.ts";
 import { Interaction, InteractionResponse } from "../types/interaction.ts";
 import { Discord } from "../environment.ts";
-import { lichess } from "../core/lichess.org.ts";
+import { lichess } from "../core/site/lichess.org.ts";
+import { Chess }   from "../core/site/chess.com.ts";
 
-type Ratings = { [category: string]: { rating: number } };
 const colors: { [platform: string]: number } = {
 	"FIDE": 0xF1C40F, "lichess.org": 0xFFFFFF, "Chess.com": 0x7FA650
 };
@@ -45,14 +45,14 @@ export const ELO: Command = {
 				continue;
 			}*/
 			case "lichess.org": ratings = await lichess.org.ratings(username); break;
-			//case "chess.com": ratings = await Chess.com.ratings(username); break;
+			case "chess.com":   ratings = await Chess.com.ratings(username);   break;
 		}
 		if (ratings === null || ratings === undefined) return Discord.error(
 			"Utente non trovato",
-			`Non sono riuscito a trovare l'utente \`${username}\` su ${highlight(platform)}.`
+			`Impossibile trovare l'utente \`${username}\` su ${highlight(platform)}.`
 		);
 		return Discord.card(
-			`Elo di ${username} su ${platforms[platform]}`,
+			`Elo ${platforms[platform]} – ${username}`,
 			Object.entries(ratings).filter(([category, _]) => category in emojis).map(
 				([category, { rating }]) => `${emojis[category]} **${category}** \`${rating}\``
 			).join('** ｜ **'),
