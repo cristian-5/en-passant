@@ -35,7 +35,7 @@ export const ELO: Command = {
 	}],
 	run: async (interaction: Interaction): Promise<InteractionResponse> => {
 		const platform = interaction.data.options![0].value! as string;
-		const username = (interaction.data.options![1].value! as string).replace(/\w|\-/g, "").trim();
+		const username = (interaction.data.options![1].value! as string).replace(/[^a-zA-Z0-9_-]/g, "").trim();
 		let ratings;
 		switch (platform) {
 			/*case "fide": {
