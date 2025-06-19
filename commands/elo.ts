@@ -51,17 +51,12 @@ export const ELO: Command = {
 			"Utente non trovato",
 			`Non sono riuscito a trovare l'utente \`${username}\` su ${highlight(platform)}.`
 		);
-		return ratingCard(interaction.member!.user!.id, username, platform, ratings);
+		return Discord.card(
+			`Elo di ${username} su ${platforms[platform]}`,
+			Object.entries(ratings).filter(([category, _]) => category in emojis).map(
+				([category, { rating }]) => `${emojis[category]} **${category}** \`${rating}\``
+			).join('** ｜ **'),
+			colors[platform]
+		);
 	}
 };
-
-function ratingCard(author: string, id: string, platform: string, ratings: Ratings) {
-	return Discord.card(
-		`Elo di ${platforms[platform]}`,
-		`:star: <@${author}> (\`${id}\`) ${highlight(platform)} ratings:\n` +
-		Object.entries(ratings).filter(([category, _]) => category in emojis).map(
-			([category, { rating }]) => `${emojis[category]} **${category}** \`${rating}\``
-		).join('** ｜ **'),
-		colors[platform]
-	);
-}
