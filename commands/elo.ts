@@ -39,9 +39,10 @@ export const Elo: Command = {
 		const platform = interaction.data.options![0].value! as string;
 		const fidename = (interaction.data.options![1].value! as string)
 			.replace(/[^a-zA-Z0-9_\- ]/g, "").trim();
-		let username = fidename.replace(/\s+/g, ""), ratings = null, player = null, flag = "";
+		let username = fidename.replace(/\s+/g, "");
+		let ratings = null, player = null, title = "", flag = "", online_profile = "";
 		switch (platform) {
-			case    "fide.com":
+			case "fide.com":
 				player = await fide.com.player(fidename);
 				if (player === null) return /^\d+$/.test(fidename) ? Discord.error(
 					"Ricerca Elo FIDE",
@@ -51,21 +52,29 @@ export const Elo: Command = {
 					`Impossibile trovare l'**ID FIDE** di \`${fidename}\`.`
 				);
 				username = player.name.split(/\s*,\s*/).reverse().join(" ");
-				flag = (player.flag || "") + " ";
+				online_profile = fide.com.profile(player.id);
+				flag = player.flag + " ";
 				ratings = player.ratings;
 			break;
-			case "lichess.org": ratings = await lichess.org.ratings(username); break;
-			case   "chess.com": ratings = await   Chess.com.ratings(username); break;
+			case "lichess.org":
+				player = await lichess.org.player(username);
+				if (player === null) break;
+				if (player.profile?.flag) flag = player.profile.flag + " ";
+				ratings = player.perfs;
+				if (player.title) title = player.title + " ";
+				if (player.patron) title += "🪽";
+				online_profile = lichess.org.profile(player.id);
+			break;
+			case "chess.com": ratings = await Chess.com.ratings(username); break;
 		}
 		return ratings === null ? Discord.error(
 			`Utente ${platforms[platform]} non trovato`,
 			`Impossibile trovare l'utente \`${username}\`.`
-		) : Discord.card(
-			`Elo ${platforms[platform]} – ` + flag + username,
+		) : Discord.embed(
+			`Elo ${platforms[platform]}`, flag + title + username,
 			Object.entries(ratings).filter(([category, _]) => category in emojis).map(
 				([c, { rating }]) => `${emojis[c]} **${c}** \`${rating > 0 ? rating : "-"}\``
-			).join('** ｜ **'),
-			colors[platform]
+			).join('** ｜ **'), colors[platform], online_profile
 		);
 	}
 };

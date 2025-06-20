@@ -4,6 +4,7 @@ import { kv } from "../../environment.ts";
 
 export const fide = {
 	com: {
+		profile: (fide_id: string) => "https://ratings.fide.com/profile/" + fide_id,
 		player: async (fide_id: string) => {
 			if (!/^\d+$/.test(fide_id)) { // search by name
 				fide_id = fide_id.replace(/\s+/g, " ").toLowerCase();

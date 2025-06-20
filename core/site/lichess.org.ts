@@ -7,8 +7,12 @@ export interface LichessCategoryStats {
 	prov?: boolean; // provisional rating
 }
 
+/// https://lichess.org/api#tag/Users/operation/apiUser
 export interface LichessUser {
 	id: string;
+	title?: string;
+	flair?: string;
+	patron?: boolean;
 	perfs: {
 		classical: LichessCategoryStats,
 		rapid: LichessCategoryStats,
@@ -26,6 +30,7 @@ export interface LichessUser {
 	},
 	createdAt: number; // timestamp
 	profile: {
+		bio?: string;
 		flag?: string; // country flag
 		links?: string;
 	},
@@ -47,7 +52,9 @@ export class lichess {
 
 	static org = {
 
-		profile: async (user: string): Promise<LichessUser | null> => {
+		profile: (user: string): string => "https://lichess.org/@/" + user,
+
+		player: async (user: string): Promise<LichessUser | null> => {
 			user = encodeURIComponent(user);
 			const url = "https://lichess.org/api/user/";
 			try {
@@ -58,8 +65,8 @@ export class lichess {
 		},
 
 		ratings: async (user: string) => {
-			const profile = await lichess.org.profile(user);
-			return profile?.perfs || null;
+			const player = await lichess.org.player(user);
+			return player?.perfs || null;
 		},
 
 		/// gets game from lichess.org given its id.

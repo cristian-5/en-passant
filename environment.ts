@@ -22,11 +22,19 @@ export const Discord = {
 		"Authorization": `Bot ${Deno.env.get("DISCORD_TOKEN")}`,
 	},
 	snow: (id: string): number => Number(BigInt(id) / 4194304n + 1420070400000n),
+	embed: (title: string, subtitle: string, message: string, color: number | undefined, url = ""): InteractionResponse => ({
+		embeds: [{
+			author: { name: title || Bot.NAME },
+			title: subtitle,
+			color: color || ColorCodes.normal,
+			description: message || "", url
+		}]
+	}),
 	card: (title: string, message: string, color: number | undefined, silent = false): InteractionResponse => ({
 		embeds: [{
 			title: title || Bot.NAME,
 			color: color || ColorCodes.normal,
-			description: message || ""
+			description: message || "",
 		}], flags: silent ? MessageFlags.EPHEMERAL : 0 // ephemeral message (only visible to the user)
 	}),
 	warn: (title: string, message: string): InteractionResponse => ({
