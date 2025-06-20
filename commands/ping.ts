@@ -6,7 +6,7 @@ import { ColorCodes, Discord } from "../environment.ts";
 export const Ping: Command = {
 	name: "ping",
 	type: CommandType.CHAT_INPUT,
-	description: "🏓 Ping per controllare lo stato del bot.",
+	description: "🏓 Controlla lo stato del bot.",
 	options: [],
 	run: async (interaction: Interaction): Promise<InteractionResponse> => Discord.card(
 		"Ping",

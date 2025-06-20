@@ -39,7 +39,7 @@ export const Elo: Command = {
 		const platform = interaction.data.options![0].value! as string;
 		const fidename = (interaction.data.options![1].value! as string)
 			.replace(/[^a-zA-Z0-9_\- ]/g, "").trim();
-		let username = fidename.replace(/\s+/g, ""), ratings = null, player = null;
+		let username = fidename.replace(/\s+/g, ""), ratings = null, player = null, flag = "";
 		switch (platform) {
 			case    "fide.com":
 				player = await fide.com.player(fidename);
@@ -51,6 +51,7 @@ export const Elo: Command = {
 					`Impossibile trovare l'**ID FIDE** di \`${fidename}\`.`
 				);
 				username = player.name.split(/\s*,\s*/).reverse().join(" ");
+				flag = (player.flag || "") + " ";
 				ratings = player.ratings;
 			break;
 			case "lichess.org": ratings = await lichess.org.ratings(username); break;
@@ -60,9 +61,9 @@ export const Elo: Command = {
 			`Utente ${platforms[platform]} non trovato`,
 			`Impossibile trovare l'utente \`${username}\`.`
 		) : Discord.card(
-			`Elo ${platforms[platform]} – ${username}`,
+			`Elo ${platforms[platform]} – ` + flag + username,
 			Object.entries(ratings).filter(([category, _]) => category in emojis).map(
-				([category, { rating }]) => `${emojis[category]} **${category}** \`${rating > 0 ? rating : "-"}\``
+				([c, { rating }]) => `${emojis[c]} **${c}** \`${rating > 0 ? rating : "-"}\``
 			).join('** ｜ **'),
 			colors[platform]
 		);
