@@ -1,6 +1,8 @@
 
 # en passant BOT
 
+![en passant BOT Logo](profile_picture.png)
+
 Serverless **en passant** discord chess bot made with ❤️ by Cristian.
 
 🦕 Environment built with `deno`, with the
@@ -11,7 +13,7 @@ Serverless **en passant** discord chess bot made with ❤️ by Cristian.
 ### Register Slash Commands:
 
 ```sh
-deno run --env-file -A register.ts
+deno run --env-file --unstable-kv --allow-env --allow-net register.ts
 ```
 
 ### Regenerate PGN Parser:

@@ -13,23 +13,24 @@ export async function register(commands: Command[], global: string = GUILD_REGIS
 }
 
 export async function remove(command: Command, global: string = GLOBAL_REGISTRATION) {
-	const url = Discord.API_URL + global + "commands/"; // get all commands
+	const url = Discord.API_URL + global + "commands"; // get all commands
 	let response = await fetch(url, { method: "GET", headers: Discord.API_HEADERS });
 	if (!response.ok) throw (await response.json());
 	const commands = await response.json();
 	const commandId = commands.find((c: Command) => c.name === command.name)?.id;
 	if (commandId === undefined) throw new Error(`Command ${command.name} not found.`);
-	console.log(commandId);
-	response = await fetch(url + commandId, { method: "DELETE", headers: Discord.API_HEADERS });
+	response = await fetch(url + "/" + commandId, { method: "DELETE", headers: Discord.API_HEADERS });
 	if (!response.ok) throw (await response.json());
-	return await response.json();
 }
 
 try {
-	await register(COMMANDS, GLOBAL_REGISTRATION);
+	await register(COMMANDS, GUILD_REGISTRATION);
 	console.log(`✅ Commands registered successfully.`);
 } catch (error) {
 	console.error(`❌ Error registering commands:`, error);
 }
 
-//for (const command of COMMANDS) await remove(command, GUILD_REGISTRATION);
+/*for (const command of COMMANDS) {
+	try { await remove(command, GUILD_REGISTRATION); }
+	catch (error) { console.error(`❌ Error removing command ${command.name}:`, error); }
+}*/

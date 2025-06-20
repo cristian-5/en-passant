@@ -2,6 +2,9 @@
 import { InteractionResponse } from "./types/interaction.ts";
 import { MessageFlags } from "./types/message.ts";
 
+// @ts-expect-error for Deno KV
+export const kv = await Deno.openKv();
+
 export const Bot = {
 	NAME: "en passant",
 	VERSION: "1.0.0",
@@ -26,6 +29,13 @@ export const Discord = {
 			description: message || ""
 		}], flags: silent ? MessageFlags.EPHEMERAL : 0 // ephemeral message (only visible to the user)
 	}),
+	warn: (title: string, message: string): InteractionResponse => ({
+		embeds: [{
+			title: title || Bot.NAME,
+			color: ColorCodes.warn,
+			description: ":children_crossing: " + (message || "Warning!")
+		}], flags: MessageFlags.EPHEMERAL
+	}),	
 	error: (title: string, message: string): InteractionResponse => ({
 		embeds: [{
 			title: title || Bot.NAME,
