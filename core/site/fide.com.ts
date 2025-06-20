@@ -69,7 +69,7 @@ export async function FIDE(id: string): Promise<FIDEPlayer | null> {
 	if (country && country.length === 2) flag = String.fromCodePoint(
 		country.charCodeAt(0) + 127397, country.charCodeAt(1) + 127397
 	);
-	return { id, name, country: country || "None", flag, title, sex, year, ratings };
+	return { id, name, country, flag, title, sex, year, ratings };
 }
 
 export const fide = {
