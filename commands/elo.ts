@@ -40,7 +40,7 @@ export const Elo: Command = {
 		const fidename = (interaction.data.options![1].value! as string)
 			.replace(/[^a-zA-Z0-9_\- ]/g, "").trim();
 		let username = fidename.replace(/\s+/g, "");
-		let ratings = null, player = null, title = "", flag = "", online_profile = "";
+		let ratings = null, player = null, title = "", flag = "", profile = "", patron = false;
 		switch (platform) {
 			case "fide.com":
 				player = await fide.com.player(fidename);
@@ -52,7 +52,7 @@ export const Elo: Command = {
 					`Impossibile trovare l'**ID FIDE** di \`${fidename}\`.`
 				);
 				username = player.name.split(/\s*,\s*/).reverse().join(" ");
-				online_profile = fide.com.profile(player.id);
+				profile = fide.com.profile(player.id);
 				flag = player.flag + " ";
 				ratings = player.ratings;
 			break;
@@ -61,9 +61,9 @@ export const Elo: Command = {
 				if (player === null) break;
 				if (player.profile?.flag) flag = player.profile.flag + " ";
 				ratings = player.perfs;
+				if (player.patron) patron = true;
 				if (player.title) title = player.title + " ";
-				if (player.patron) title += "🪽";
-				online_profile = lichess.org.profile(player.id);
+				profile = lichess.org.profile(player.id);
 			break;
 			case "chess.com": ratings = await Chess.com.ratings(username); break;
 		}
@@ -71,10 +71,10 @@ export const Elo: Command = {
 			`Utente ${platforms[platform]} non trovato`,
 			`Impossibile trovare l'utente \`${username}\`.`
 		) : Discord.embed(
-			`Elo ${platforms[platform]}`, flag + title + username,
+			(patron ? "🪽 " : "") + platforms[platform], flag + title + username,
 			Object.entries(ratings).filter(([category, _]) => category in emojis).map(
 				([c, { rating }]) => `${emojis[c]} **${c}** \`${rating > 0 ? rating : "-"}\``
-			).join('** ｜ **'), colors[platform], online_profile
+			).join('** ｜ **'), colors[platform], profile
 		);
 	}
 };

@@ -60,7 +60,12 @@ export class lichess {
 			try {
 				const response = await fetch(url + user);
 				if (response.status != 200) return null;
-				return await response.json();
+				const data = await response.json();
+				if (data.profile.flag) data.profile.flag = String.fromCodePoint(
+					data.profile.flag.charCodeAt(0) + 127397,
+					data.profile.flag.charCodeAt(1) + 127397
+				);
+				return data as LichessUser;
 			} catch { return null; }
 		},
 
