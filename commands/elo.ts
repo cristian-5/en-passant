@@ -50,6 +50,7 @@ export const Elo: Command = {
 				username = player.name.split(/\s*,\s*/).reverse().join(" ");
 				profile = fide.com.profile(player.id);
 				flag = player.flag + " ";
+				if (player.title) title = player.title + " ";
 				ratings = player.ratings;
 			break;
 			case "lichess.org":
