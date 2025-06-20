@@ -21,15 +21,15 @@ export const Ping: Command = {
 			title: "🇦🇷 FM Cristian Sanhueza",
 			color: 0x4e63bb, description: "",
 			fields: [{
-				name: "blitz",
+				name: "BTZ ⚡️",
 				value: "`1200`",
 				inline: true
 			},{
-				name: "rapid",
+				name: "RPD ⏱️",
 				value: "`1200`",
 				inline: true
 			},{
-				name: "classical",
+				name: "STD 🕰️",
 				value: "`1200`",
 				inline: true
 			}]
