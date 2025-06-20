@@ -29,7 +29,7 @@ function find(regex: RegExp, html: string): string | null {
 	else return data[1].trim();
 }
 
-const TITLES: { [original: string]: string } = {
+const TITLES: { [original: string]: string | undefined } = {
 	"Woman Candidate Master": "WCM",
 	"Woman FIDE Master": "WFM",
 	"Woman International Master": "WIM",
@@ -38,6 +38,7 @@ const TITLES: { [original: string]: string } = {
 	"FIDE Master": "FM",
 	"International Master": "IM",
 	"Grandmaster": "GM",
+	"None": undefined // no title
 };
 
 export async function FIDE(id: string): Promise<FIDEPlayer | null> {
