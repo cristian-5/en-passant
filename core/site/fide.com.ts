@@ -13,7 +13,9 @@ export const fide = {
 			}
 			const user = await FIDE(fide_id);
 			if (user === null) return null;
-			const names = user.name.split(/\s*,\s*/).map(n => n.trim().toLowerCase());
+			const names = user.name.split(
+				user.name.includes(",") ? /\s*,\s*/ : /\s+/
+			).map(n => n.trim().toLowerCase());
 			kv.set(["fide", names[0] + " " + names[1]], fide_id);
 			kv.set(["fide", names[1] + " " + names[0]], fide_id);
 			return user;
