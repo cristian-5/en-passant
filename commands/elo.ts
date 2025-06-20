@@ -46,7 +46,7 @@ export const Elo: Command = {
 			case   "chess.com": ratings = await   Chess.com.ratings(username); break;
 		}
 		if (ratings === null || ratings === undefined) {
-			if (platform === "fide") return /^\d+$/.test(fidename) ? Discord.error(
+			if (platform === "fide.com") return /^\d+$/.test(fidename) ? Discord.error(
 				"Ricerca Elo FIDE",
 				`Impossibile trovare l'**ID FIDE** \`${fidename}\`.`
 			) : Discord.warn( // could not find FIDE ID for the specified name:
