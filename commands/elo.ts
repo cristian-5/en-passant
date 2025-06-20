@@ -7,7 +7,7 @@ import { lichess } from "../core/site/lichess.org.ts";
 import { Chess   } from "../core/site/chess.com.ts";
 
 const colors: { [platform: string]: number } = {
-	"fide.com": 0xC6CDDD, "lichess.org": 0xFFFFFF, "chess.com": 0x7FA650
+	"fide.com": 0x4e63bb, "lichess.org": 0xFFFFFF, "chess.com": 0x7FA650
 };
 const platforms: { [platform: string]: string } = {
 	"fide.com": "FIDE", "lichess.org": "lichess.org", "chess.com": "Chess.com"
@@ -48,8 +48,7 @@ export const Elo: Command = {
 					`Impossibile trovare l'**ID FIDE** \`${fidename}\`.`
 				) : Discord.warn( // could not find FIDE ID for the specified name:
 					"Ricerca Elo FIDE",
-					`Impossibile trovare l'**ID FIDE** di \`${fidename}\`.\n` +
-					"Riprova con l'**ID** in modo da salvarlo per il futuro."
+					`Impossibile trovare l'**ID FIDE** di \`${fidename}\`.`
 				);
 				username = player.name.split(/\s*,\s*/).reverse().join(" ");
 				ratings = player.ratings;

@@ -7,7 +7,7 @@ export const fide = {
 		player: async (fide_id: string) => {
 			if (!/^\d+$/.test(fide_id)) { // search by name
 				fide_id = fide_id.replace(/\s+/g, " ").toLowerCase();
-				const id = kv.get(["fide", fide_id]); // saved FIDE ID
+				const id = await kv.get(["fide", fide_id]); // saved FIDE ID
 				if (id.value === null) return null;
 				fide_id = id.value as string;
 			}
