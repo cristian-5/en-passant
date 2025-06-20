@@ -4,7 +4,7 @@ import { kv } from "../../environment.ts";
 
 export const fide = {
 	com: {
-		ratings: async (fide_id: string) => {
+		player: async (fide_id: string) => {
 			if (!/^\d+$/.test(fide_id)) { // search by name
 				fide_id = fide_id.replace(/\s+/g, " ").toLowerCase();
 				const id = kv.get(["fide", fide_id]); // saved FIDE ID
@@ -16,7 +16,7 @@ export const fide = {
 			const names = user.name.split(/\s*,\s*/).map(n => n.trim().toLowerCase());
 			kv.set(["fide", names[0] + " " + names[1]], fide_id);
 			kv.set(["fide", names[1] + " " + names[0]], fide_id);
-			return user.ratings;
+			return user;
 		}
 	}
 }

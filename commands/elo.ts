@@ -7,10 +7,10 @@ import { lichess } from "../core/site/lichess.org.ts";
 import { Chess   } from "../core/site/chess.com.ts";
 
 const colors: { [platform: string]: number } = {
-	"fide": 0xF1C40F, "lichess.org": 0xFFFFFF, "chess.com": 0x7FA650
+	"fide.com": 0x24305E, "lichess.org": 0xFFFFFF, "chess.com": 0x7FA650
 };
 const platforms: { [platform: string]: string } = {
-	"fide": "FIDE", "lichess.org": "lichess.org", "chess.com": "Chess.com"
+	"fide.com": "FIDE", "lichess.org": "lichess.org", "chess.com": "Chess.com"
 };
 const highlight = (p: string) => (p == 'FIDE' ? '**FIDE**' : `__${p}__`);
 const emojis: { [platform: string]: string } = {
@@ -39,27 +39,27 @@ export const Elo: Command = {
 		const platform = interaction.data.options![0].value! as string;
 		const fidename = (interaction.data.options![1].value! as string)
 			.replace(/[^a-zA-Z0-9_\- ]/g, "").trim();
-		let username = fidename.replace(/\s+/g, ""), ratings;
+		let username = fidename.replace(/\s+/g, ""), ratings = null, player = null;
 		switch (platform) {
-			case    "fide.com": ratings = await    fide.com.ratings(fidename); break;
+			case    "fide.com":
+				player = await fide.com.player(fidename);
+				if (player === null) return /^\d+$/.test(fidename) ? Discord.error(
+					"Ricerca Elo FIDE",
+					`Impossibile trovare l'**ID FIDE** \`${fidename}\`.`
+				) : Discord.warn( // could not find FIDE ID for the specified name:
+					"Ricerca Elo FIDE",
+					`Impossibile trovare l'**ID FIDE** di \`${fidename}\`.\n` +
+					"Riprova con l'**ID** in modo da salvarlo per il futuro."
+				);
+				ratings = player.ratings;
+			break;
 			case "lichess.org": ratings = await lichess.org.ratings(username); break;
 			case   "chess.com": ratings = await   Chess.com.ratings(username); break;
 		}
-		if (ratings === null || ratings === undefined) {
-			if (platform === "fide.com") return /^\d+$/.test(fidename) ? Discord.error(
-				"Ricerca Elo FIDE",
-				`Impossibile trovare l'**ID FIDE** \`${fidename}\`.`
-			) : Discord.warn( // could not find FIDE ID for the specified name:
-				"Ricerca Elo FIDE",
-				`Impossibile trovare l'**ID FIDE** di \`${fidename}\`.\n` +
-				"Riprova con l'**ID** in modo da salvarlo per il futuro."
-			);
-			return Discord.error(
-				`Utente ${platforms[platform]} non trovato`,
-				`Impossibile trovare l'utente \`${username}\`.`
-			);
-		}
-		return Discord.card(
+		return ratings === null ? Discord.error(
+			`Utente ${platforms[platform]} non trovato`,
+			`Impossibile trovare l'utente \`${username}\`.`
+		) : Discord.card(
 			`Elo ${platforms[platform]} – ${username}`,
 			Object.entries(ratings).filter(([category, _]) => category in emojis).map(
 				([category, { rating }]) => `${emojis[category]} **${category}** \`${rating > 0 ? rating : "-"}\``
