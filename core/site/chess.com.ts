@@ -4,6 +4,7 @@ export interface ChessComPlayer {
 	avatar?: string; // URL to the player's avatar
 	"@id": string;
 	url: string;
+	name?: string;
 	title?: string;
 	username: string;
 	followers: number;
@@ -66,8 +67,6 @@ export interface ChessComStats {
 export class Chess {
 
 	static com = {
-
-		profile: (user: string): string => "https://www.chess.com/member/" + user,
 
 		player: async (user: string): Promise<ChessComPlayer | null> => {
 			user = encodeURIComponent(user);

@@ -9,10 +9,6 @@ import { Chess   } from "../core/site/chess.com.ts";
 const colors: { [platform: string]: number } = {
 	"fide.com": 0x4e63bb, "lichess.org": 0xFFFFFF, "chess.com": 0x7FA650
 };
-const platforms: { [platform: string]: string } = {
-	"fide.com": "FIDE", "lichess.org": "lichess.org", "chess.com": "Chess.com"
-};
-const highlight = (p: string) => (p == 'FIDE' ? '**FIDE**' : `__${p}__`);
 const emojis: { [platform: string]: string } = {
 	"bullet": ":gun:", "rapid": ":stopwatch:",
 	"blitz": ":zap:", "standard": ":clock:",
@@ -27,9 +23,9 @@ export const Elo: Command = {
 		description: "Sito da cui recuperare i dati.",
 		name: "sito", type: CommandOptionType.STRING, required: true,
 		choices: [
-			{ name: "🔵  FIDE", value: "fide.com" },
-			{ name: "⚪️  lichess.org", value: "lichess.org" },
-			{ name: "🟢  Chess.com", value: "chess.com" }
+			{ name: "fide.com", value: "fide.com" },
+			{ name: "lichess.org", value: "lichess.org" },
+			{ name: "chess.com", value: "chess.com" }
 		]
 	}, {
 		description: "Nome utente utilizzato sul sito.",
@@ -71,14 +67,15 @@ export const Elo: Command = {
 				if (player.flag) flag = player.flag + " ";
 				if (player.title) title = player.title + " ";
 				ratings = await Chess.com.ratings(username);
-				profile = Chess.com.profile(username);
+				profile = player.url;
+				if (player.name) username = player.name;
 			break;
 		}
 		return ratings === null ? Discord.error(
-			`Utente ${platforms[platform]} non trovato`,
+			`Utente ${platform} non trovato`,
 			`Impossibile trovare l'utente \`${username}\`.`
 		) : Discord.embed(
-			(patron ? "🪽 " : "") + platforms[platform], flag + title + username,
+			(patron ? "🪽 " : "") + platform, flag + title + username,
 			Object.entries(ratings).filter(([category, _]) => category in emojis).map(
 				([c, { rating }]) => `${emojis[c]} **${c}** \`${rating > 0 ? rating : "-"}\``
 			).join('** ｜ **'), colors[platform], profile
