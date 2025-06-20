@@ -17,9 +17,8 @@ export const Ping: Command = {
 	)*/
 	({
 		embeds: [{
-			author: { name: "Elo FIDE" },
+			author: { name: "Elo FIDE - 116815", url: "https://ratings.fide.com/profile/116815" },
 			title: "🇦🇷 FM Cristian Sanhueza",
-			url: "https://ratings.fide.com/profile/116815",
 			color: 0x4e63bb, description: "",
 			fields: [{
 				name: "blitz",
