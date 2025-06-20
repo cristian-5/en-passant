@@ -1,11 +1,14 @@
 
 export interface ChessComPlayer {
 	player_id: number;
+	avatar?: string; // URL to the player's avatar
 	"@id": string;
 	url: string;
+	title?: string;
 	username: string;
 	followers: number;
 	country: string;
+	flag?: string;
 	last_online: number; // timestamp
 	joined: number;      // timestamp
 	status: string;
@@ -64,13 +67,23 @@ export class Chess {
 
 	static com = {
 
-		profile: async (user: string): Promise<ChessComPlayer | null> => {
+		profile: (user: string): string => "https://www.chess.com/member/" + user,
+
+		player: async (user: string): Promise<ChessComPlayer | null> => {
 			user = encodeURIComponent(user);
 			const url = "https://api.chess.com/pub/player/";
 			try {
 				const response = await fetch(url + user);
 				if (response.status !== 200) return null;
-				return await response.json();
+				const data = await response.json();
+				if (data.country) {
+					data.country = data.country.substring(data.country.length - 2).toUpperCase();
+					data.flag = String.fromCodePoint(
+						data.country.charCodeAt(0) + 127397,
+						data.country.charCodeAt(1) + 127397
+					);
+				}
+				return data as ChessComPlayer;
 			} catch { return null; }
 		},
 

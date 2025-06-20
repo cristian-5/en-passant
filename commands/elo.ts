@@ -65,7 +65,14 @@ export const Elo: Command = {
 				if (player.title) title = player.title + " ";
 				profile = lichess.org.profile(player.id);
 			break;
-			case "chess.com": ratings = await Chess.com.ratings(username); break;
+			case "chess.com":
+				player = await Chess.com.player(username);
+				if (player === null) break;
+				if (player.flag) flag = player.flag + " ";
+				if (player.title) title = player.title + " ";
+				ratings = await Chess.com.ratings(username);
+				profile = Chess.com.profile(username);
+			break;
 		}
 		return ratings === null ? Discord.error(
 			`Utente ${platforms[platform]} non trovato`,
