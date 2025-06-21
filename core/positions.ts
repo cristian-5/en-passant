@@ -1,14 +1,17 @@
 
-import { Image } from "https://deno.land/x/imagescript@1.2.15/mod.ts";
+import { Image } from "jsr:@matmen/imagescript";
 
-import { PIECES_50 } from "./pieces.ts";
+import { BACKGROUND_400, PIECES_50 } from "./pieces.ts";
 
 type Piece = "k" | "q" | "r" | "b" | "n" | "p";
 export type Color = "w" | "b";
 type Board =  ({ type: string, color: Color } | null)[][];
 const THEME = { light: 0xffce9eff, dark: 0xd18b47ff, highlight: 0x0fa42e4d };
 const FILES = "abcdefgh", SIDE = 50, SIZE = SIDE * 8;
-const PIECES: { [color: string]: { [piece: string]: Image }; }= {
+const BACKGROUND: { [color: string]: Image } = {
+	'w': await Image.decode(BACKGROUND_400["w"]),
+	'b': await Image.decode(BACKGROUND_400["b"])
+}, PIECES: { [color: string]: { [piece: string]: Image }; } = {
 	'w': {
 		'p': await Image.decode(PIECES_50["w"]["p"]),
 		'n': await Image.decode(PIECES_50["w"]["n"]),
@@ -87,18 +90,13 @@ export class Position {
 
 	async picture(perspective: Color = "w") {
 		const img = new Image(SIZE, SIZE);
-		img.fill(THEME.light);
-
-		for (const f of FILES)
-			for (let r = 1; r <= 8; r++)
-				if ((FILES.indexOf(f) + r) % 2 == 0)
-					img.drawBox(
-						FILES.indexOf(f) * SIDE,
-						(8 - r) * SIDE,
-						SIDE,
-						SIDE,
-						THEME.dark
-					);
+		img.composite(BACKGROUND[perspective], 1, 1);
+		/*img.fill(THEME.light);
+		for (let r = 0; r < 8; r++)
+			for (let f = 0; f < 8; f++)
+				if ((f + r) % 2 === 0) img.drawBox(
+					f * SIDE + 1, (7 - r) * SIDE + 1, SIDE, SIDE, THEME.dark
+				);*/
 
 		for (const square of this.highlights) {
 			let [f, r] = [square[0], Number(square[1])];
@@ -115,7 +113,7 @@ export class Position {
 			img.composite(sprite.resize(SIDE, SIDE), x, y);
 		}
 
-		return await img.encode(5); // compression level 5
+		return await img.encode(5); // compression level 5 / 9
 	}
 
 	#coords(f: string, r: number, perspective: Color) {

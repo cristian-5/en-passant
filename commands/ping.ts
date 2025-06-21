@@ -9,8 +9,8 @@ export const Ping: Command = {
 	description: "🏓 Controlla lo stato del bot.",
 	options: [],
 	run: async (interaction: Interaction): Promise<InteractionResponse> => Discord.card(
-		"Ping",
-		`:ping_pong: **Pong**. Server latency: \`${
+		"Pong",
+		`:ping_pong: Server latency: \`${
 			Date.now() - Discord.snow(interaction.id)
 		}ms\``, 0xdd2d44
 	)
