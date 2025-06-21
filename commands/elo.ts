@@ -90,7 +90,7 @@ export const Elo: Command = {
 			`Utente ${platform} non trovato`,
 			`Impossibile trovare l'utente \`${username}\`.`
 		) : Discord.embed(
-			flag + title + username,
+			flag + title + username + (patron ? " 🪽" : ""),
 			Object.entries(ratings).filter(([category, _]) => category in emojis).map(
 				([c, { rating }]) => `${emojis[c]} **${c}** \`${rating > 0 ? rating : "-"}\``
 			).join('** ｜ **'), color, profile
