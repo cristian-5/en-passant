@@ -51,7 +51,7 @@ export const FEN: Command = {
 			embeds: [{
 				type: "image", title: "Posizione",
 				color: game.turn() === 'w' ? 0xFFFFFF : 0x000000,
-				image: { url: "attachment://" + filename, height: 800, width: 800 },
+				image: { url: "attachment://" + filename, height: 400, width: 400 },
 				description: "**FEN: **`" + fen + "`", footer: { text: status },
 			}]
 		};
