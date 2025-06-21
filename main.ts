@@ -2,7 +2,7 @@
 import { json, serve, validateRequest } from "https://deno.land/x/sift@0.6.0/mod.ts";
 import nacl from "https://esm.sh/tweetnacl@v1.0.3?dts";
 import { Discord } from "./environment.ts";
-import { Interaction, InteractionType, InteractionCallbackType } from "./types/interaction.ts";
+import { Interaction, InteractionType, InteractionCallbackType, DiscordFile, InteractionResponse } from "./types/interaction.ts";
 import { COMMANDS } from "./commands.ts";
 
 serve({ "/": main });
@@ -23,6 +23,8 @@ async function main(request: Request) {
 	if (interaction.type === InteractionType.APPLICATION_COMMAND) {
 		const command = COMMANDS.find((cmd) => cmd.name === interaction.data.name);
 		if (command === undefined) return json({ type: 4, data: { content: "Error: COMMAND NOT FOUND" } });
+		const data = await command.run(interaction);
+		if ("files" in data && data.files!.length > 0) return multipart(data); // sending files
 		return json({
 			type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
 			data: await command.run(interaction)
@@ -50,3 +52,51 @@ function hexToUint8Array(hex: string) {
 		hex.match(/.{1,2}/g)!.map((val) => parseInt(val, 16)),
 	);
 }
+
+async function multipart(payload: InteractionResponse): Promise<Response> {
+	const files = payload.files!;
+	delete payload.files; // avoid sending files in JSON
+
+	payload.attachments = files.map((file, index) => ({
+		id: index.toString(), filename: file.name
+	}));
+
+	const form = new FormData();
+	form.append("payload_json", JSON.stringify(payload));
+
+	for (let i = 0; i < files.length; i++) form.append(
+		`files[${i}]`,
+		new Blob([files[i].data], { type: files[i].mime ?? "application/octet-stream" }),
+		files[i].name
+	);
+
+	return new Response(form, { status: 200 });
+
+}
+
+/*async function multipart(payload: InteractionResponse): Promise<Response> {
+	const files = payload.files!;
+	delete payload.files; // avoid sending files in JSON
+	const BOUNDARY = "discord-boundary";
+	const { readable, writable } = new TransformStream();
+	const writer = new MultipartWriter(writable.getWriter(), BOUNDARY);
+
+	payload.attachments = files.map((file, index) => ({
+		id: index.toString(), filename: file.name
+	}));
+
+	await writer.writeField("payload_json", JSON.stringify(payload));
+
+	for (let i = 0; i < files.length; i++) await writer.writeFile(
+		`files[${i}]`, files[i].name,
+		new Blob([files[i].data], { type: files[i].mime ?? "application/octet-stream" })
+	);
+
+	await writer.close();
+
+	return new Response(readable, {
+		status: 200,
+		headers: { "Content-Type": `multipart/form-data; boundary=${BOUNDARY}` }
+	});
+
+}*/

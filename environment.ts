@@ -48,8 +48,9 @@ export const Discord = {
 			color: ColorCodes.error,
 			description: ":no_entry_sign: " + (message || "Error!")
 		}], flags: MessageFlags.EPHEMERAL
-	})
-
+	}),
+	/// sends a file with the given name and blob to discord
+	file: (name: string, blob: Blob) => null
 };
 
 export const ColorCodes = {

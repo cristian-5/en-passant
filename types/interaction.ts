@@ -81,8 +81,33 @@ export interface InteractionResponse {
 	flags?: number;
 	// TODO: implement later if needed
 	// components?: Component[];
-	// attachments?: Attachment[];
 	// poll?: Poll;
+	attachments?: Attachment[];
+	// NOTE: not really part of the discord API
+	files?: DiscordFile[]; // CUSTOM IMPLEMENTATION
+}
+
+export interface DiscordFile {
+	name: string;
+	data: Uint8Array;
+	mime: string;
+}
+
+export interface Attachment {
+	id: string;
+	filename: string;
+	title?: string;
+	description?: string; // max 1024 characters
+	content_type?: string;
+	size?: number; // in bytes
+	url?: string;
+	proxy_url?: string;
+	height?: number | null; // if image
+	width?: number | null;  // if image
+	ephemeral?: boolean;    // whether this attachment is ephemeral
+	duration_secs?: number; // for audio files (voice messages)
+	waveform?: string;      // base64-encoded byte array (voice messages)
+	flags?: number;
 }
 
 /* https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object
