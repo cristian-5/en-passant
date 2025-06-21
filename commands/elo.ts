@@ -20,6 +20,37 @@ export const Elo: Command = {
 	type: CommandType.CHAT_INPUT,
 	description: "📈 Mostra il tuo elo online.",
 	options: [{
+		description: "ratings.fide.com",
+		name: "fide", type: CommandOptionType.SUB_COMMAND,
+		options: [{
+			description: "FIDE ID o nome dell'utente.",
+			name: "id", type: CommandOptionType.STRING, required: true
+		}]
+	}, {
+		description: "chess.com",
+		name: "chess_com", type: CommandOptionType.SUB_COMMAND,
+		options: [{
+			description: "Nome utente su chess.com.",
+			name: "username", type: CommandOptionType.STRING, required: true
+		}]
+	}, {
+		description: "lichess.org",
+		name: "lichess", type: CommandOptionType.SUB_COMMAND,
+		options: [{
+			description: "Nome utente su lichess.org.",
+			name: "username", type: CommandOptionType.STRING, required: true
+		}]
+	}],
+	run: async (interaction: Interaction): Promise<InteractionResponse> => {
+		return { content: JSON.stringify(interaction.data) }
+	}
+};
+
+export const Elo_OLD: Command = {
+	name: "elo",
+	type: CommandType.CHAT_INPUT,
+	description: "📈 Mostra il tuo elo online.",
+	options: [{
 		description: "Sito da cui recuperare i dati.",
 		name: "sito", type: CommandOptionType.STRING, required: true,
 		choices: [
