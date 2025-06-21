@@ -7,7 +7,7 @@ import { lichess } from "../core/site/lichess.org.ts";
 import { Chess   } from "../core/site/chess.com.ts";
 
 const colors: { [platform: string]: number } = {
-	"fide.com": 0x4e63bb, "lichess.org": 0xFFFFFF, "chess.com": 0x7FA650
+	"fide": 0x4e63bb, "lichess": 0xFFFFFF, "chess": 0x7FA650
 };
 const emojis: { [platform: string]: string } = {
 	"bullet": ":gun:", "rapid": ":stopwatch:",
@@ -18,58 +18,39 @@ const emojis: { [platform: string]: string } = {
 export const Elo: Command = {
 	name: "elo",
 	type: CommandType.CHAT_INPUT,
-	description: "📈 Mostra il tuo elo online.",
+	description: "🎰 Mostra il tuo elo online.",
 	options: [{
-		description: "ratings.fide.com",
+		description: "📊 Mostra Elo FIDE",
 		name: "fide", type: CommandOptionType.SUB_COMMAND,
 		options: [{
-			description: "FIDE ID o nome dell'utente.",
+			description: "FIDE ID o nome dell'utente",
 			name: "id", type: CommandOptionType.STRING, required: true
 		}]
 	}, {
-		description: "chess.com",
-		name: "chess_com", type: CommandOptionType.SUB_COMMAND,
+		description: "📉 Mostra Elo su chess.com",
+		name: "chess", type: CommandOptionType.SUB_COMMAND,
 		options: [{
-			description: "Nome utente su chess.com.",
+			description: "Nome utente su chess.com",
 			name: "username", type: CommandOptionType.STRING, required: true
 		}]
 	}, {
-		description: "lichess.org",
+		description: "📈 Mostra Elo su lichess.org",
 		name: "lichess", type: CommandOptionType.SUB_COMMAND,
 		options: [{
-			description: "Nome utente su lichess.org.",
+			description: "Nome utente su lichess.org",
 			name: "username", type: CommandOptionType.STRING, required: true
 		}]
 	}],
 	run: async (interaction: Interaction): Promise<InteractionResponse> => {
-		return { content: JSON.stringify(interaction.data) }
-	}
-};
-
-export const Elo_OLD: Command = {
-	name: "elo",
-	type: CommandType.CHAT_INPUT,
-	description: "📈 Mostra il tuo elo online.",
-	options: [{
-		description: "Sito da cui recuperare i dati.",
-		name: "sito", type: CommandOptionType.STRING, required: true,
-		choices: [
-			{ name: "fide.com", value: "fide.com" },
-			{ name: "lichess.org", value: "lichess.org" },
-			{ name: "chess.com", value: "chess.com" }
-		]
-	}, {
-		description: "Nome utente utilizzato sul sito.",
-		name: "username", type: CommandOptionType.STRING, required: true
-	}],
-	run: async (interaction: Interaction): Promise<InteractionResponse> => {
-		const platform = interaction.data.options![0].value! as string;
-		const fidename = (interaction.data.options![1].value! as string)
+		let platform = interaction.data.options![0].name! as string;
+		const color = colors[platform];
+		const fidename = (interaction.data.options![0].options![0].value! as string)
 			.replace(/[^a-zA-Z0-9_\- ]/g, "").trim();
 		let username = fidename.replace(/\s+/g, "");
 		let ratings = null, player = null, title = "", flag = "", profile = "", patron = false;
 		switch (platform) {
-			case "fide.com":
+			case "fide":
+				platform = "FIDE";
 				player = await fide.com.player(fidename);
 				if (player === null) return /^\d+$/.test(fidename) ? Discord.error(
 					"Ricerca Elo FIDE",
@@ -84,7 +65,8 @@ export const Elo_OLD: Command = {
 				if (player.title) title = player.title + " ";
 				ratings = player.ratings;
 			break;
-			case "lichess.org":
+			case "lichess":
+				platform = "lichess.org";
 				player = await lichess.org.player(username);
 				if (player === null) break;
 				if (player.profile?.flag) flag = player.profile.flag + " ";
@@ -93,7 +75,8 @@ export const Elo_OLD: Command = {
 				if (player.title) title = player.title + " ";
 				profile = lichess.org.profile(player.id);
 			break;
-			case "chess.com":
+			case "chess":
+				platform = "chess.com";
 				player = await Chess.com.player(username);
 				if (player === null) break;
 				if (player.flag) flag = player.flag + " ";
@@ -107,10 +90,11 @@ export const Elo_OLD: Command = {
 			`Utente ${platform} non trovato`,
 			`Impossibile trovare l'utente \`${username}\`.`
 		) : Discord.embed(
-			(patron ? "🪽 " : "") + platform, flag + title + username,
+			flag + title + username,
 			Object.entries(ratings).filter(([category, _]) => category in emojis).map(
 				([c, { rating }]) => `${emojis[c]} **${c}** \`${rating > 0 ? rating : "-"}\``
-			).join('** ｜ **'), colors[platform], profile
+			).join('** ｜ **'), color, profile
 		);
 	}
 };
+
