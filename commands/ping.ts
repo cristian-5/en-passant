@@ -12,7 +12,6 @@ export const Ping: Command = {
 		"Ping",
 		`:ping_pong: **Pong**. Server latency: \`${
 			Date.now() - Discord.snow(interaction.id)
-		}ms\``,
-		ColorCodes.normal
+		}ms\``, 0xdd2d44
 	)
 };

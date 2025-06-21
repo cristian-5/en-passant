@@ -3,7 +3,7 @@ import { Chess } from "../core/chess.ts";
 import { Command, CommandOptionType, CommandType } from "../types/command.ts";
 import { Interaction, InteractionResponse } from "../types/interaction.ts";
 import { Discord } from "../environment.ts";
-import { Color, Position } from "../core/diagrams.ts";
+import { Color, Position } from "../core/positions.ts";
 
 export const FEN: Command = {
 	name: "fen",
@@ -60,5 +60,5 @@ export const FEN: Command = {
 
 async function png_from(game: Chess, perspective: Color) {
 	const diagram = new Position(game.board());
-	return await diagram.picture(perspective, true);
+	return await diagram.picture(perspective);
 }
