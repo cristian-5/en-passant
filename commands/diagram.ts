@@ -45,7 +45,7 @@ export const FEN: Command = {
 			`**FEN:** \`${fen}\`\n` +
 			"https://it.wikipedia.org/wiki/Notazione_Forsyth-Edwards"
 		);
-		const filename = fen.replace(/[^A-Za-z0-9_.\-]/g, '_') + ".png";
+		const filename = "fen_test.png";
 		return {
 			files: [{ data: diagram!, name: filename, mime: "image/png" }],
 			embeds: [{

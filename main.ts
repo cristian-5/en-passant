@@ -24,11 +24,8 @@ async function main(request: Request) {
 		const command = COMMANDS.find((cmd) => cmd.name === interaction.data.name);
 		if (command === undefined) return json({ type: 4, data: { content: "Error: COMMAND NOT FOUND" } });
 		const data = await command.run(interaction);
-		if ("files" in data && data.files!.length > 0) return multipart(data); // sending files
-		return json({
-			type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
-			data: await command.run(interaction)
-		});
+		if (data.files && data.files!.length > 0) return multipart(data); // sending files
+		return json({ type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE, data });
 	}
 	return json({ error: "Bad Request" }, { status: 400 });
 }
@@ -53,13 +50,18 @@ function hexToUint8Array(hex: string) {
 	);
 }
 
-async function multipart(payload: InteractionResponse): Promise<Response> {
-	const files = payload.files!;
-	delete payload.files; // avoid sending files in JSON
+async function multipart(response: InteractionResponse): Promise<Response> {
+	const files = response.files!;
+	delete response.files; // avoid sending files in JSON
 
-	payload.attachments = files.map((file, index) => ({
+	response.attachments = files.map((file, index) => ({
 		id: index.toString(), filename: file.name
 	}));
+
+	const payload = {
+		type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
+		data: response
+	};
 
 	const form = new FormData();
 	form.append("payload_json", JSON.stringify(payload));
