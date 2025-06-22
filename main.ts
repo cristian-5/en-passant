@@ -2,7 +2,8 @@
 import { json, serve, validateRequest } from "https://deno.land/x/sift@0.6.0/mod.ts";
 import nacl from "https://esm.sh/tweetnacl@v1.0.3?dts";
 import { Discord } from "./environment.ts";
-import { Interaction, InteractionType, InteractionCallbackType, DiscordFile, InteractionResponse } from "./types/interaction.ts";
+import { Interaction, InteractionType, InteractionCallbackType, InteractionResponse } from "./types/interaction.ts";
+import { MultipartData } from "./core/multipart.ts";
 import { COMMANDS } from "./commands.ts";
 
 serve({ "/": main });
@@ -63,17 +64,13 @@ async function multipart(response: InteractionResponse): Promise<Response> {
 		data: response
 	};
 
-	const form = new FormData();
-	form.append("payload_json", JSON.stringify(payload));
+	const multipart = new MultipartData("discord-boundary");
+	multipart.addJSON("payload_json", payload);
 
-	for (let i = 0; i < files.length; i++) form.append(
-		`files[${i}]`,
-		new Blob([files[i].data], { type: files[i].mime ?? "application/octet-stream" }),
-		files[i].name
-	);
+	for (let i = 0; i < files.length; i++)
+		multipart.addFile(`files[${i}]`, files[i].name, files[i].data, files[i].mime);
 
-	return new Response(form, { status: 200 });
-
+	return multipart.build();
 }
 
 /*async function multipart(payload: InteractionResponse): Promise<Response> {
