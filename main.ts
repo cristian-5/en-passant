@@ -68,12 +68,13 @@ function hexToUint8Array(hex: string) {
 }*/
 
 async function multipart(response: InteractionResponse): Promise<Response> {
+
 	const files = response.files!;
 	delete response.files; // avoid sending files in JSON
-	
-	/*response.attachments = files.map((file, index) => ({
+
+	response.attachments = files.map((file, index) => ({
 		id: index.toString(), filename: file.name
-		}));*/
+	}));
 		
 	const payload = {
 		type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -82,6 +83,11 @@ async function multipart(response: InteractionResponse): Promise<Response> {
 
 	const form = new FormData();
 	form.append("payload_json", JSON.stringify(payload));
+
+	for (let i = 0; i < files.length; i++) {
+		const file = files[i];
+		form.append(`files[${i}]`, new Blob([file.data], { type: file.mime ?? "application/octet-stream" }), file.name);
+	}
 
 	/*const multipart = new MultipartData("discord-boundary");
 	multipart.addJSON("payload_json", response);
