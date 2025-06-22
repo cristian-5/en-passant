@@ -70,17 +70,20 @@ function hexToUint8Array(hex: string) {
 async function multipart(response: InteractionResponse): Promise<Response> {
 	const files = response.files!;
 	delete response.files; // avoid sending files in JSON
-
+	
 	/*response.attachments = files.map((file, index) => ({
 		id: index.toString(), filename: file.name
-	}));*/
-
+		}));*/
+		
 	const payload = {
 		type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
 		data: response
 	};
 
-	const multipart = new MultipartData("discord-boundary");
+	const form = new FormData();
+	form.append("payload_json", JSON.stringify(payload));
+
+	/*const multipart = new MultipartData("discord-boundary");
 	multipart.addJSON("payload_json", response);
 
 	for (let i = 0; i < files.length; i++)
@@ -90,7 +93,8 @@ async function multipart(response: InteractionResponse): Promise<Response> {
 
 	const m = multipart.build();
 	console.log(await m.text());
-	return m;
+	return m;*/
+	return new Response(form);
 }
 
 /*async function multipart(payload: InteractionResponse): Promise<Response> {
