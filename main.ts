@@ -88,7 +88,9 @@ async function multipart(response: InteractionResponse): Promise<Response> {
 
 	console.log("ABOUT TO SEND MULTIPART RESPONSE");
 
-	return multipart.build();
+	const m = multipart.build();
+	console.log(m);
+	return m;
 }
 
 /*async function multipart(payload: InteractionResponse): Promise<Response> {
