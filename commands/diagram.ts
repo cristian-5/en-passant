@@ -50,9 +50,9 @@ export const FEN: Command = {
 		console.log("ABOUT TO SEND DIAGRAM");*/
 		const filename = "fen_test.png";
 		return {
-			files: [{ data: new Uint8Array()/*diagram!*/, name: filename, mime: "image/png" }],
+			//files: [{ data: new Uint8Array()/*diagram!*/, name: filename, mime: "image/png" }],
 			embeds: [{
-				type: "image", title: "Posizione",
+				title: "Posizione",
 				color: game.turn() === 'w' ? 0xFFFFFF : 0x000000,
 				//image: { url: "attachment://" + filename, height: 400, width: 400 },
 				description: "**FEN: **`" + fen + "`", footer: { text: status },
