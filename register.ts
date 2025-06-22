@@ -24,7 +24,7 @@ export async function remove(command: Command, global: string = GLOBAL_REGISTRAT
 }
 
 try {
-	await register(COMMANDS, GUILD_REGISTRATION);
+	await register(COMMANDS, GLOBAL_REGISTRATION);
 	console.log(`✅ Commands registered successfully.`);
 } catch (error) {
 	console.error(`❌ Error registering commands:`, error);
