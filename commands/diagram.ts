@@ -39,15 +39,12 @@ export const FEN: Command = {
 		let perspective = game.turn();
 		if (interaction.data.options!.length > 1)
 			perspective = interaction.data.options![1].value! as Color;
-		console.log("FEN:", fen, "Perspective:", perspective);
 		const diagram = await png_from(game, perspective);
-		console.log("DIAGRAM DONE");
 		if (diagram === null) return Discord.error(
 			"Posizione FEN Invalida",
 			`**FEN:** \`${fen}\`\n` +
 			"https://it.wikipedia.org/wiki/Notazione_Forsyth-Edwards"
 		);
-		console.log("ABOUT TO SEND DIAGRAM");
 		const filename = "fen_test.png";
 		return {
 			files: [{ data: diagram!, name: filename, mime: "image/png" }],
@@ -55,7 +52,7 @@ export const FEN: Command = {
 				type: "image", title: "Posizione",
 				color: game.turn() === 'w' ? 0xFFFFFF : 0x000000,
 				image: { url: "attachment://" + filename, height: 400, width: 400 },
-				//description: "**FEN: **`" + fen + "`", footer: { text: status },
+				description: "**FEN: **`" + fen + "`", footer: { text: status },
 			}]
 		};
 	}
