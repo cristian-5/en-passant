@@ -42,17 +42,17 @@ export const FEN: Command = {
 		const diagram = await png_from(game, perspective);
 		if (diagram === null) return Discord.error(
 			"Posizione FEN Invalida",
-			`**FEN:** \`${fen}\`\n` +
-			"https://it.wikipedia.org/wiki/Notazione_Forsyth-Edwards"
+			"La notazione contiene errori.\n" +
+			"https://it.wikipedia.org/wiki/Notazione_Forsyth-Edwards" +
+			"\n`" + fen + "`"
 		);
-		const filename = "fen_test.png";
 		return {
-			files: [{ data: diagram!, name: filename, mime: "image/png" }],
+			files: [{ data: diagram!, name: "fen.png", mime: "image/png" }],
 			embeds: [{
-				type: "image", title: "Posizione",
+				type: "image", title: "Posizione FEN",
 				color: game.turn() === 'w' ? 0xFFFFFF : 0x000000,
-				image: { url: "attachment://" + filename, height: 400, width: 400 },
-				description: "**FEN: **`" + fen + "`", footer: { text: status },
+				image: { url: "attachment://fen.png", height: 400, width: 400 },
+				description: "`" + fen + "`", footer: { text: status },
 			}]
 		};
 	}
