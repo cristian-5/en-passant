@@ -26,12 +26,12 @@ export class MultipartData {
 	}
 
 	addFile(name: string, filename: string, content: string | Uint8Array, contentType = "application/octet-stream") {
-		this.parts.push(
+		/*this.parts.push(
 			`--${this.boundary}`,
 			`Content-Disposition: form-data; name="${name}"; filename="${filename}"`,
 			`Content-Type: ${contentType}`,
 			"", typeof content === "string" ? content : new TextDecoder().decode(content)
-		);
+		);*/
 	}
 
 	build(status: number = 200): Response {

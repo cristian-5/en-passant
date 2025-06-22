@@ -71,9 +71,9 @@ async function multipart(response: InteractionResponse): Promise<Response> {
 	const files = response.files!;
 	delete response.files; // avoid sending files in JSON
 
-	response.attachments = files.map((file, index) => ({
+	/*response.attachments = files.map((file, index) => ({
 		id: index.toString(), filename: file.name
-	}));
+	}));*/
 
 	const payload = {
 		type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
