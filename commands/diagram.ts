@@ -38,7 +38,7 @@ export const FEN: Command = {
 		} else status = game.turn() === 'w' ? "⬜️ Muove il Bianco" : "⬛️ Muove il Nero";
 		let perspective = game.turn();
 		if (interaction.data.options!.length > 1)
-			perspective = interaction.data.options![1].value! as Color;
+			perspective = (interaction.data.options![1].value! as string)[0] as Color;
 		const diagram = await png_from(game, perspective);
 		if (diagram === null) return Discord.error(
 			"Posizione FEN Invalida",
