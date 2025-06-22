@@ -46,12 +46,13 @@ export const FEN: Command = {
 			"https://it.wikipedia.org/wiki/Notazione_Forsyth-Edwards" +
 			"\n`" + fen + "`"
 		);
+		const filename = fen.replace(/[^a-zA-Z0-9]+/g, "_") + ".png";
 		return {
-			files: [{ data: diagram!, name: "fen.png", mime: "image/png" }],
+			files: [{ data: diagram!, name: filename, mime: "image/png" }],
 			embeds: [{
 				type: "image", title: "Posizione FEN",
 				color: game.turn() === 'w' ? 0xFFFFFF : 0x000000,
-				image: { url: "attachment://fen.png", height: 400, width: 400 },
+				image: { url: "attachment://" + filename, height: 400, width: 400 },
 				description: "`" + fen + "`", footer: { text: status },
 			}]
 		};
