@@ -24,6 +24,13 @@ async function main(request: Request) {
 	if (interaction.type === InteractionType.APPLICATION_COMMAND) {
 		const command = COMMANDS.find((cmd) => cmd.name === interaction.data.name);
 		if (command === undefined) return json({ type: 4, data: { content: "Error: COMMAND NOT FOUND" } });
+		/* DEFERRED COMMANDS (ASYNCHRONOUS)
+		if (command.deferred) {
+			command.run(interaction).then(respond); // run in the background, then send a response
+			// in the meantime acknowledge the interaction (runs before the previous line):
+			return json({ type: InteractionCallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE });
+		}*/
+		// NON DEFERRED COMMANDS (SYNCRONOUS)
 		const data = await command.run(interaction);
 		if (data.files && data.files!.length > 0) return multipart(data); // sending files
 		return json({ type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE, data });
@@ -46,10 +53,19 @@ async function verifySignature(request: Request): Promise<{ valid: boolean; body
 
 /// Converts a hexadecimal string to Uint8Array.
 function hexToUint8Array(hex: string) {
-	return new Uint8Array(
-		hex.match(/.{1,2}/g)!.map((val) => parseInt(val, 16)),
-	);
+	return new Uint8Array(hex.match(/.{1,2}/g)!.map(v => parseInt(v, 16)));
 }
+
+/*async function respond(interaction_token: string, response: InteractionResponse) {
+	await fetch(Discord.WEBHOOK_URL + `/${interaction_token}`, {
+		method: "POST",
+		headers: Discord.API_HEADERS,
+		body: JSON.stringify({
+			type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
+			data: response,
+		})
+	});
+}*/
 
 async function multipart(response: InteractionResponse): Promise<Response> {
 	const files = response.files!;
@@ -69,6 +85,8 @@ async function multipart(response: InteractionResponse): Promise<Response> {
 
 	for (let i = 0; i < files.length; i++)
 		multipart.addFile(`files[${i}]`, files[i].name, files[i].data, files[i].mime);
+
+	console.log("ABOUT TO SEND MULTIPART RESPONSE");
 
 	return multipart.build();
 }
