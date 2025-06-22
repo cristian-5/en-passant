@@ -90,13 +90,13 @@ export class Position {
 
 	async picture(perspective: Color = "w") {
 		const img = new Image(SIZE, SIZE);
-		//img.composite(BACKGROUND[perspective], 1, 1);
-		img.fill(THEME.light);
+		img.composite(BACKGROUND[perspective], 1, 1);
+		/*img.fill(THEME.light);
 		for (let r = 0; r < 8; r++)
 			for (let f = 0; f < 8; f++)
 				if ((f + r) % 2 === 0) img.drawBox(
 					f * SIDE + 1, (7 - r) * SIDE + 1, SIDE, SIDE, THEME.dark
-				);
+				);*/
 
 		for (const square of this.highlights) {
 			let [f, r] = [square[0], Number(square[1])];
