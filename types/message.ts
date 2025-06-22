@@ -2,7 +2,7 @@
 import { User } from './member.ts';
 
 /// https://discord.com/developers/docs/resources/message#message-object-message-flags
-export enum MessageFlags {
+export const enum MessageFlags {
 	CROSSPOSTED = 1 << 0,
 	IS_CROSSPOST = 1 << 1,
 	SUPPRESS_EMBEDS = 1 << 2,
@@ -19,7 +19,7 @@ export enum MessageFlags {
 }
 
 /// https://discord.com/developers/docs/resources/message#message-object-message-types
-export enum MessageType {
+export const enum MessageType {
 	DEFAULT = 0,
 	RECIPIENT_ADD = 1,
 	RECIPIENT_REMOVE = 2,

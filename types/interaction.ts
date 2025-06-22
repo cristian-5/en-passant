@@ -5,7 +5,7 @@ import { Channel } from './channel.ts';
 import { Message, Embed } from './message.ts';
 
 /// https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-type
-export enum InteractionType {
+export const enum InteractionType {
 	PING = 1, // ping from Discord to check if the bot is online
 	APPLICATION_COMMAND = 2, // application command interaction (e.g., slash commands)
 	MESSAGE_COMPONENT = 3, // interaction with a message component (e.g., buttons)
@@ -14,7 +14,7 @@ export enum InteractionType {
 }
 
 /// https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-interaction-callback-type
-export enum InteractionCallbackType {
+export const enum InteractionCallbackType {
 	PONG = 1, // response to a ping interaction
 	CHANNEL_MESSAGE_WITH_SOURCE = 4,
 	DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE = 5,

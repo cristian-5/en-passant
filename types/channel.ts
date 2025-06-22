@@ -2,7 +2,7 @@
 import { User } from './member.ts';
 
 /// https://discord.com/developers/docs/resources/channel#channel-object-channel-types
-export enum ChannelType {
+export const enum ChannelType {
 	GUILD_TEXT = 0, // text channel within a server
 	DM = 1, // direct message between users
 	GUILD_VOICE = 2, // voice channel within a server

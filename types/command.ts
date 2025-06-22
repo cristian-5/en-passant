@@ -2,7 +2,7 @@
 import { Interaction, InteractionResponse } from "./interaction.ts";
 
 /// https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
-export enum CommandOptionType {
+export const enum CommandOptionType {
 	SUB_COMMAND = 1,
 	SUB_COMMAND_GROUP = 2,
 	STRING = 3,
@@ -38,7 +38,7 @@ export interface CommandOption {
 }
 
 /// https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-types
-export enum CommandType {
+export const enum CommandType {
 	CHAT_INPUT = 1, // slash commands
 	USER_COMMAND = 2, // context menu commands for users
 	MESSAGE_COMMAND = 3, // context menu commands for messages
@@ -57,6 +57,7 @@ export interface Command {
 	options?: CommandOption[];
 	nsfw?: boolean;
 	integration_types?: number[];
+	deferred?: boolean; // CUSTOM: command is slow to respond
 	// =============================================================
 	run: (interaction: Interaction) => Promise<InteractionResponse>;
 }
