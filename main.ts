@@ -81,7 +81,7 @@ async function multipart(response: InteractionResponse): Promise<Response> {
 	};
 
 	const multipart = new MultipartData("discord-boundary");
-	multipart.addJSON("payload_json", payload);
+	multipart.addJSON("payload_json", response);
 
 	for (let i = 0; i < files.length; i++)
 		multipart.addFile(`files[${i}]`, files[i].name, files[i].data, files[i].mime);
