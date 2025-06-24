@@ -52,11 +52,11 @@ export const PGN: Command = {
 			"La notazione contiene errori.\n" +
 			"https://it.wikipedia.org/wiki/Notazione_Portable_Game"
 		);
-		const filename = "preview.gif";//attachment.filename.replace(/\.pgn$/, ".gif").replace(/[^a-zA-Z0-9]+/g, "_");
+		const filename = attachment.filename.replace(/\.pgn$/, ".gif").replace(/[^a-zA-Z0-9]+/g, "_");
 		return {
 			files: [{ data: diagram!, name: filename, mime: "image/gif" }],
 			embeds: [{
-				type: "rich", title: "Anteprima Partita",
+				type: "gifv", title: "Anteprima Partita",
 				image: { url: "attachment://" + filename, height: 400, width: 400 },
 				description: description(game), footer: { text: status(game) }
 			}]
@@ -73,7 +73,6 @@ function status(game: Chess): string {
 		);
 	}
 	const headers = game.getHeaders();
-	console.log(headers["TimeControl"]);
 	const t = control(headers["TimeControl"] || "");
 	if (t !== undefined) status += status === "" ? t : " ・ " + t;
 	return status;
@@ -96,7 +95,6 @@ function control(t: string): string | undefined {
 	if (/^\d+$/.test(last)) // sudden death (e.g., "300" = 5 min)
 		return `🕰️ ${min(parseInt(last))}`;
 	if (/^\d+\+\d+$/.test(last)) { // base+increment (e.g., "300+2")
-		console.log(last.split("+"));
 		const [base, inc] = last.split("+").map(Number);
 		return `🕰️ ${min(base)}+${inc}`;
 	}
