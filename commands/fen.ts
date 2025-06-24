@@ -8,7 +8,7 @@ import { Color, Position } from "../core/positions.ts";
 export const FEN: Command = {
 	name: "fen",
 	type: CommandType.CHAT_INPUT,
-	description: "📋 Diagramma da notazione FEN.",
+	description: "🏷️ Diagramma da notazione FEN.",
 	options: [{
 		name: "fen", type: CommandOptionType.STRING, required: true,
 		description: "Notazione Forsyth–Edwards",
@@ -39,7 +39,7 @@ export const FEN: Command = {
 		let perspective = game.turn();
 		if (interaction.data.options!.length > 1)
 			perspective = (interaction.data.options![1].value! as string)[0] as Color;
-		const diagram = await png_from(game, perspective);
+		const diagram = await (new Position(game.board())).picture(perspective);
 		if (diagram === null) return Discord.error(
 			"Posizione FEN Invalida",
 			"La notazione contiene errori.\n" +
@@ -58,8 +58,3 @@ export const FEN: Command = {
 		};
 	}
 };
-
-async function png_from(game: Chess, perspective: Color) {
-	const diagram = new Position(game.board());
-	return await diagram.picture(perspective);
-}

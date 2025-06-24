@@ -1,12 +1,13 @@
 
 import { Image } from "jsr:@matmen/imagescript";
+import { GIFEncoder, quantize, applyPalette } from "https://unpkg.com/gifenc@1.0.3/dist/gifenc.esm.js";
 
 import { BACKGROUND_400, PIECES_50 } from "./pieces.ts";
 
-type Piece = "k" | "q" | "r" | "b" | "n" | "p";
 export type Color = "w" | "b";
+type Piece = "k" | "q" | "r" | "b" | "n" | "p";
 type Board =  ({ type: string, color: Color } | null)[][];
-const THEME = { light: 0xffce9eff, dark: 0xd18b47ff, highlight: 0x0fa42e4d };
+
 const FILES = "abcdefgh", SIDE = 50, SIZE = SIDE * 8;
 const BACKGROUND: { [color: string]: Image } = {
 	'w': await Image.decode(BACKGROUND_400["w"]),
@@ -80,29 +81,9 @@ export class Position {
 		return this;
 	}
 
-	highlight(square: string) {
-		if (square.length !== 2) return this;
-		if (square[0] < "a" || square[0] > "h") return this;
-		if (square[1] < "1" || square[1] > "8") return this;
-		this.highlights.push(square);
-		return this;
-	}
-
 	async picture(perspective: Color = "w") {
 		const img = new Image(SIZE, SIZE);
 		img.composite(BACKGROUND[perspective], 1, 1);
-		/*img.fill(THEME.light);
-		for (let r = 0; r < 8; r++)
-			for (let f = 0; f < 8; f++)
-				if ((f + r) % 2 === 0) img.drawBox(
-					f * SIDE + 1, (7 - r) * SIDE + 1, SIDE, SIDE, THEME.dark
-				);*/
-
-		for (const square of this.highlights) {
-			let [f, r] = [square[0], Number(square[1])];
-			let [x, y] = this.#coords(f, r, perspective);
-			img.drawBox(x, y, SIDE, SIDE, THEME.highlight);
-		}
 
 		for (const [square, pieceData] of Object.entries(this.squares)) {
 			if (!pieceData) continue;
@@ -126,31 +107,60 @@ export class Position {
 
 export class Positions {
 	#boards: Board[] = [];
-	#highlights: string[][] = [];
 	#perspective: Color;
 
 	constructor(perspective: Color = "w") {
 		this.#perspective = perspective;
 	}
 
-	add(board: Board, highlight: string[] = []) {
+	append(board: Board) {
 		this.#boards.push(board);
-		this.#highlights.push(highlight);
+	}
+	prepend(board: Board) {
+		this.#boards.unshift(board);
 	}
 
-	/*async gif(delay = 800): Promise<Uint8Array | null> {
-		const frames: Image[] = [];
-
-		for (let i = 0; i < this.#boards.length; i++) {
-			const pos = new Position(this.#boards[i]);
-			for (const h of this.#highlights[i]) pos.highlight(h);
-			const frameData = await pos.picture(this.#perspective);
-			frames.push(await Image.decode(frameData));
+	#frames() {
+		const frames = []; let i = 0;
+		for (const board of this.#boards) {
+			const frame = new Image(SIZE, SIZE);
+			frame.composite(BACKGROUND[this.#perspective], 0, 0);
+			for (const f of FILES) {
+				for (let r = 8; r >= 1; r--) {
+					let x = 0, y = 0;
+					if (this.#perspective === "w") {
+						x = SIDE * FILES.indexOf(f);
+						y = SIDE * (8 - r);
+					} else {
+						x = SIDE * (7 - FILES.indexOf(f));
+						y = SIDE * (r - 1);
+					}
+					// place pieces:
+					const square = board[8 - r][FILES.indexOf(f)];
+					if (square === null) continue;
+					const { type, color } = square!;
+					frame.composite(PIECES[color][type], x, y);
+				}
+			}
+			frames.push(frame);
 		}
+		return frames;
+	}
 
+	async gif(delay = 800): Promise<Uint8Array | null> {
+		const frames = this.#frames();
+		const encoder = GIFEncoder();
 		if (frames.length === 0) return null;
-
-		return await Image.gifEncode(frames, delay);
-	}*/
+		for (const frame of frames) {
+			const data = frame.bitmap;
+			const palette = quantize(data, 24, { format: "rgb444" });
+			const index = applyPalette(data, palette, "rgb444");
+			encoder.writeFrame(index, SIZE, SIZE, {
+				delay, palette, repeat: -1
+			});
+		}
+		encoder.finish();
+		return encoder.bytes();
+	}
 
 }
