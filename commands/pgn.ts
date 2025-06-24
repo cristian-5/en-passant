@@ -4,7 +4,6 @@ import { Command, CommandOptionType, CommandType } from "../types/command.ts";
 import { Interaction, InteractionResponse } from "../types/interaction.ts";
 import { Discord } from "../environment.ts";
 import { Color, Positions } from "../core/positions.ts";
-import { parse } from "../core/pgn.js";
 
 export const PGN: Command = {
 	name: "pgn",
@@ -57,7 +56,7 @@ export const PGN: Command = {
 		return {
 			files: [{ data: diagram!, name: filename, mime: "image/gif" }],
 			embeds: [{
-				type: "gifv", title: "Anteprima Partita",
+				type: "rich", title: "Anteprima Partita",
 				image: { url: "attachment://" + filename, height: 400, width: 400 },
 				description: description(game), footer: { text: status(game) }
 			}]
