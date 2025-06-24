@@ -52,7 +52,7 @@ export const PGN: Command = {
 			"La notazione contiene errori.\n" +
 			"https://it.wikipedia.org/wiki/Notazione_Portable_Game"
 		);
-		const filename = attachment.filename.replace(/\.pgn$/, ".gif").replace(/[^a-zA-Z0-9]+/g, "_");
+		const filename = "preview.gif"; // do not rename, discord is picky about it
 		return {
 			files: [{ data: diagram!, name: filename, mime: "image/gif" }],
 			embeds: [{
