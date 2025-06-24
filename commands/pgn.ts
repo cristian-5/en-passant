@@ -4,7 +4,6 @@ import { Command, CommandOptionType, CommandType } from "../types/command.ts";
 import { Interaction, InteractionResponse } from "../types/interaction.ts";
 import { Discord } from "../environment.ts";
 import { Color, Positions } from "../core/positions.ts";
-import { description, status as gameStatus } from "../core/game.ts";
 
 export const PGN: Command = {
 	name: "pgn",
@@ -41,7 +40,8 @@ export const PGN: Command = {
 				`Impossibile leggere il pgn: \`${e}\`.`
 			);
 		}
-		const status = gameStatus(game), positions = new Positions("b");
+		const perspective = (interaction.data.options![1].value! as string)[0] as Color;
+		const positions = new Positions(perspective);
 		do positions.prepend(game.board());
 		while (game.undo() !== null);
 		const diagram = await positions.gif();
@@ -57,8 +57,39 @@ export const PGN: Command = {
 				type: "gifv", title: "Anteprima Partita",
 				color: game.turn() === 'w' ? 0xFFFFFF : 0x000000,
 				image: { url: "attachment://" + filename, height: 400, width: 400 },
-				description: description(game.getHeaders()), footer: { text: status }
+				description: description(game), footer: { text: status(game) }
 			}]
 		};
 	}
 };
+
+function status(game: Chess): string {
+	let status = '';
+	if (game.isGameOver()) {
+		if (game.isDraw()) status = "½-½ ・ Draw";
+		else if (game.isCheckmate()) status = (
+			game.turn() === 'w' ? "0-1 ・ ⬛️ Vince il Nero" : "1-0 ・ ⬜️ Vince il Bianco"
+		);
+	}
+	const headers = game.getHeaders();
+	const t = headers["TimeControl"];
+	if (t !== undefined && t !== "" && t !== "-") status += ` ・ **Tempo:** \`${control(t)}\``;
+	return status;
+}
+
+function description(game: Chess): string | undefined {
+	const headers = game.getHeaders();
+	const w = headers["White"], b = headers["Black"];
+	if (w != undefined && b != undefined)
+		return `⬜️ **\`${w}\`** vs **\`${b}\`** ⬛️`;
+}
+
+function control(t: string): string {
+	const match = t.match(/(\d+)\s*(?:\+\s*(\d+))?/);
+	if (match === null) return t;
+	return (
+		match.slice(1)
+		.map(e => !(parseInt(e) % 60) ? parseInt(e) / 60 : parseInt(e))
+		.map(e => e || '0').join('+')
+	);
+}
