@@ -10,7 +10,7 @@ export const PGN: Command = {
 	type: CommandType.CHAT_INPUT,
 	description: "📄 Diagramma da file pgn.",
 	options: [{
-		name: "pgn", type: CommandOptionType.ATTACHMENT, required: true,
+		name: "file", type: CommandOptionType.ATTACHMENT, required: true,
 		description: "File pgn contenente la partita",
 	}, {
 		name: "prospettiva", type: CommandOptionType.STRING, required: false,
