@@ -4,6 +4,7 @@ import { Command, CommandOptionType, CommandType } from "../types/command.ts";
 import { Interaction, InteractionResponse } from "../types/interaction.ts";
 import { Discord } from "../environment.ts";
 import { Color, Positions } from "../core/positions.ts";
+import { parse } from "../core/pgn.js";
 
 export const PGN: Command = {
 	name: "pgn",
@@ -88,20 +89,19 @@ function description(game: Chess): string | undefined {
 function control(t: string): string | undefined {
 	if (t === "" || t === "?" || t === "-") return undefined;
 	const fields = t.split(":");
-	const min = (sec: number): string => (sec % 60 === 0 ? (sec / 60).toString() : (sec / 60).toFixed(1));
+	const min = (s: number): string => (s % 60 === 0 ? (s / 60).toString() : (s / 60).toFixed(1));
 	const last = fields[fields.length - 1];
-	if (/^\d+\/\d+$/.test(last)) { // "moves/seconds" (e.g., "40/9000")
-		const [moves, seconds] = last.split("/").map(Number);
-		return `🕰️ \`${min(seconds)}\``;
-	}
+	console.log("Control:", t, last);
+	if (/^\d+\/\d+$/.test(last)) // "moves/seconds" (e.g., "40/9000")
+		return `🕰️ \`${min(parseInt(last.split("/")[1]))}\``;
 	if (/^\d+$/.test(last)) // sudden death (e.g., "300" = 5 min)
-		return `🕰️ \`${min(Number(last))}\``;
+		return `🕰️ \`${min(parseInt(last))}\``;
 	if (/^\d+\+\d+$/.test(last)) { // base+increment (e.g., "300+2")
-		const [base, inc] = last.split("+").map(Number);
+		const [base, inc] = last.split("+").map(parseInt);
 		return `🕰️ \`${min(base)}+${inc}\``;
 	}
 	if (/^\*\d+$/.test(last)) { // sandclock (e.g., "*180")
-		const seconds = Number(last.slice(1));
+		const seconds = parseInt(last.slice(1));
 		return `🕰️ \`${min(seconds)}\``;
 	}
 }
