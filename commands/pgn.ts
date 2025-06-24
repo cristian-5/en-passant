@@ -55,7 +55,6 @@ export const PGN: Command = {
 			files: [{ data: diagram!, name: filename, mime: "image/gif" }],
 			embeds: [{
 				type: "gifv", title: "Anteprima Partita",
-				color: game.turn() === 'w' ? 0xFFFFFF : 0x000000,
 				image: { url: "attachment://" + filename, height: 400, width: 400 },
 				description: description(game), footer: { text: status(game) }
 			}]
@@ -72,8 +71,8 @@ function status(game: Chess): string {
 		);
 	}
 	const headers = game.getHeaders();
-	const t = headers["TimeControl"];
-	if (t !== undefined && t !== "" && t !== "-") status += ` ・ **Tempo:** \`${control(t)}\``;
+	const t = control(headers["TimeControl"] || "");
+	if (t !== undefined) status += " ・ " + t;
 	return status;
 }
 
@@ -84,12 +83,23 @@ function description(game: Chess): string | undefined {
 		return `⬜️ **\`${w}\`** vs **\`${b}\`** ⬛️`;
 }
 
-function control(t: string): string {
-	const match = t.match(/(\d+)\s*(?:\+\s*(\d+))?/);
-	if (match === null) return t;
-	return (
-		match.slice(1)
-		.map(e => !(parseInt(e) % 60) ? parseInt(e) / 60 : parseInt(e))
-		.map(e => e || '0').join('+')
-	);
+function control(t: string): string | undefined {
+	if (t === "" || t === "?" || t === "-") return undefined;
+	const fields = t.split(":");
+	const min = (sec: number): string => (sec % 60 === 0 ? (sec / 60).toString() : (sec / 60).toFixed(1));
+	const last = fields[fields.length - 1];
+	if (/^\d+\/\d+$/.test(last)) { // "moves/seconds" (e.g., "40/9000")
+		const [moves, seconds] = last.split("/").map(Number);
+		return `🕰️ \`${min(seconds)}\``;
+	}
+	if (/^\d+$/.test(last)) // sudden death (e.g., "300" = 5 min)
+		return `🕰️ \`${min(Number(last))}\``;
+	if (/^\d+\+\d+$/.test(last)) { // base+increment (e.g., "300+2")
+		const [base, inc] = last.split("+").map(Number);
+		return `🕰️ \`${min(base)}+${inc}\``;
+	}
+	if (/^\*\d+$/.test(last)) { // sandclock (e.g., "*180")
+		const seconds = Number(last.slice(1));
+		return `🕰️ \`${min(seconds)}\``;
+	}
 }
