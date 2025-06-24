@@ -10,3 +10,23 @@ export function status(game: Chess): string {
 	} else status = game.turn() === 'w' ? "⬜️ Muove il Bianco" : "⬛️ Muove il Nero";
 	return status;
 }
+
+export function description(headers: Record<string, string>): string {
+	const w = headers["White"], b = headers["Black"];
+	let description = "";
+	if (w != undefined && b != undefined)
+		description = `⬜️ **\`${w}\`** vs **\`${b}\`** ⬛️`;
+	const t = headers["TimeControl"];
+	if (t !== undefined && t !== "") description += ` ・ **Tempo:** \`${control(t)}\``;
+	return description;
+}
+
+export function control(t: string): string {
+	const match = t.match(/(\d+)\s*(?:\+\s*(\d+))?/);
+	if (match === null) return t;
+	return (
+		match.slice(1)
+		.map(e => !(parseInt(e) % 60) ? parseInt(e) / 60 : parseInt(e))
+		.map(e => e || '0').join('+')
+	);
+}

@@ -4,7 +4,7 @@ import { Command, CommandOptionType, CommandType } from "../types/command.ts";
 import { Interaction, InteractionResponse } from "../types/interaction.ts";
 import { Discord } from "../environment.ts";
 import { Color, Positions } from "../core/positions.ts";
-import { status as gameStatus } from "../core/game.ts";
+import { description, status as gameStatus } from "../core/game.ts";
 
 export const PGN: Command = {
 	name: "pgn",
@@ -50,14 +50,14 @@ export const PGN: Command = {
 			"La notazione contiene errori.\n" +
 			"https://it.wikipedia.org/wiki/Notazione_Portable_Game"
 		);
-		const filename = attachment.filename.replace(/\.pgn$/, ".gif").replace(/[^a-zA-Z0-9]+/g, "_");
+		const filename = "preview.gif";//attachment.filename.replace(/\.pgn$/, ".gif").replace(/[^a-zA-Z0-9]+/g, "_");
 		return {
 			files: [{ data: diagram!, name: filename, mime: "image/gif" }],
 			embeds: [{
-				type: "image", title: "Anteprima Partita",
+				type: "gifv", title: "Anteprima Partita",
 				color: game.turn() === 'w' ? 0xFFFFFF : 0x000000,
 				image: { url: "attachment://" + filename, height: 400, width: 400 },
-				footer: { text: status }
+				description: description(game.getHeaders()), footer: { text: status }
 			}]
 		};
 	}
