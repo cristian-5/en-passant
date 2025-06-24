@@ -22,7 +22,7 @@ export const PGN: Command = {
 	}],
 	run: async (interaction: Interaction): Promise<InteractionResponse> => {
 		const pgn = interaction.data.options![0].value;
-		console.log(interaction.data.options);
+		console.log(interaction);
 		return Discord.error(
 			"Posizione FEN Invalida",
 			"La notazione contiene errori.\n"
