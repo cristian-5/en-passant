@@ -30,7 +30,9 @@ export const FEN: Command = {
 				"https://it.wikipedia.org/wiki/Notazione_Forsyth-Edwards"
 			);
 		}
-		const perspective = (interaction.data.options![1].value! as string)[0] as Color;
+		let perspective: Color = "w";
+		if (interaction.data.options!.length > 1)
+			perspective = (interaction.data.options![1].value! as string)[0] as Color;
 		const diagram = await (new Position(game.board())).picture(perspective);
 		if (diagram === null) return Discord.error(
 			"Posizione FEN Invalida",

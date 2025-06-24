@@ -40,7 +40,9 @@ export const PGN: Command = {
 				`Impossibile leggere il pgn: \`${e}\`.`
 			);
 		}
-		const perspective = (interaction.data.options![1].value! as string)[0] as Color;
+		let perspective: Color = "w";
+		if (interaction.data.options!.length > 1)
+			perspective = (interaction.data.options![1].value! as string)[0] as Color;
 		const positions = new Positions(perspective);
 		do positions.prepend(game.board());
 		while (game.undo() !== null);
