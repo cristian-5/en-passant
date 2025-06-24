@@ -34,8 +34,8 @@ export const PGN: Command = {
 			"File PGN Inesistente",
 			`Impossibile recuperare il file pgn: \`${attachment.filename}\``
 		);
-		let game: Chess;
-		try { game = new Chess(await response.text()); } catch (e) {
+		const game = new Chess();
+		try { game.loadPgn(await response.text()); } catch (e) {
 			return Discord.error(
 				"File PGN Invalido",
 				`Impossibile leggere il pgn: \`${e}\`.`
