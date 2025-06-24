@@ -82,7 +82,7 @@ function description(game: Chess): string | undefined {
 	const headers = game.getHeaders();
 	const w = headers["White"], b = headers["Black"];
 	if (w != undefined && b != undefined)
-		return `⬜️ **\`${w}\`** vs **\`${b}\`** ⬛️`;
+		return `⬜️ **${w}** vs **${b}** ⬛️`;
 }
 
 function control(t: string): string | undefined {
