@@ -4,6 +4,7 @@ import { Command, CommandOptionType, CommandType } from "../types/command.ts";
 import { Interaction, InteractionResponse } from "../types/interaction.ts";
 import { Discord } from "../environment.ts";
 import { Color, Position } from "../core/positions.ts";
+import { status as gameStatus } from "../core/game.ts";
 
 export const FEN: Command = {
 	name: "fen",
@@ -30,15 +31,8 @@ export const FEN: Command = {
 				"https://it.wikipedia.org/wiki/Notazione_Forsyth-Edwards"
 			);
 		}
-		let status = "";
-		if (game.isGameOver()) {
-			if (game.isDraw()) status = "½-½ ・ Pareggio";
-			else if (game.isCheckmate())
-				status = game.turn() === 'w' ? "0-1 ・ ⬛️ Vince il Nero" : "1-0 ・ ⬜️ Vince il Bianco";
-		} else status = game.turn() === 'w' ? "⬜️ Muove il Bianco" : "⬛️ Muove il Nero";
-		let perspective = game.turn();
-		if (interaction.data.options!.length > 1)
-			perspective = (interaction.data.options![1].value! as string)[0] as Color;
+		const status = gameStatus(game);
+		const perspective = (interaction.data.options![1].value! as string)[0] as Color;
 		const diagram = await (new Position(game.board())).picture(perspective);
 		if (diagram === null) return Discord.error(
 			"Posizione FEN Invalida",
@@ -53,7 +47,7 @@ export const FEN: Command = {
 				type: "image", title: "Posizione FEN",
 				color: game.turn() === 'w' ? 0xFFFFFF : 0x000000,
 				image: { url: "attachment://" + filename, height: 400, width: 400 },
-				description: "`" + fen + "`", footer: { text: status },
+				description: "`" + fen + "`", footer: { text: status }
 			}]
 		};
 	}

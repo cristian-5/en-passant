@@ -35,13 +35,21 @@ export interface InteractionOption {
 	focused?: boolean; // whether this option is focused for autocomplete
 }
 
+/// https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-resolved-data-structure
+export interface ResolvedData {
+	users?: Record<string, User>;
+	members?: Record<string, Member>;
+	channels?: Record<string, Channel>;
+	messages?: Record<string, Message>;
+	attachments?: Record<string, Attachment>;
+}
+
 /// https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-data
 export interface InteractionData {
 	id: string;
 	name: string;
 	type: InteractionType;
-	// TODO: implement later if needed
-	// resolved?: ResolvedData;
+	resolved?: ResolvedData;
 	options?: InteractionOption[];
 	guild_id?: string;
 	target_id?: string;
