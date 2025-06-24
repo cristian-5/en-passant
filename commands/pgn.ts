@@ -73,6 +73,7 @@ function status(game: Chess): string {
 		);
 	}
 	const headers = game.getHeaders();
+	console.log(headers["TimeControl"]);
 	const t = control(headers["TimeControl"] || "");
 	if (t !== undefined) status += " ・ " + t;
 	return status;
